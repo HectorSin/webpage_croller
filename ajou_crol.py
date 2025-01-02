@@ -61,40 +61,8 @@ def save_new_notices():
         df_combined = pd.concat([new_rows, df_existing], ignore_index=True)
         df_combined.to_excel("ajou_notice.xlsx", index=False)
         print(f"아주대 공지사항: 새로 추가된 공지 {len(new_rows)}건 저장 완료 (상단에 추가)")
-        send_kakao_message(f"아주대 공지사항: 새로운 공지 {len(new_rows)}건이 있습니다.")
     else:
         print("아주대 공지사항: 새로운 공지가 없습니다.")
-        send_kakao_message("새로운 공지가 없습니다.")
-
-def send_kakao_message(message):
-    with open(r"kakao_code.json","r") as fp:
-        tokens = json.load(fp)
-    
-    url="https://kapi.kakao.com/v2/api/talk/memo/default/send"
-
-    # kapi.kakao.com/v2/api/talk/memo/default/send 
-
-    headers={
-        "Authorization" : "Bearer " + tokens["access_token"]
-    }
-
-    data={
-        "template_object": json.dumps({
-            "object_type":"text",
-            "text":message,
-            "link":{
-                "web_url":"www.naver.com"
-            }
-        })
-    }
-
-    response = requests.post(url, headers=headers, data=data)
-    response.status_code
-    print(response.status_code)
-    if response.json().get('result_code') == 0:
-        print('메시지를 성공적으로 보냈습니다.')
-    else:
-        print('메시지를 성공적으로 보내지 못했습니다. 오류메시지 : ' + str(response.json()))
 
 if __name__ == "__main__":
     save_new_notices()
